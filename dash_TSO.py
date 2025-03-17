@@ -19,7 +19,7 @@ st.write("""
 # TSO - Análise de Competências
 """ )
 aval = ["Auto Avaliação","Avaliador"]
-st.sidebar.image("Logo TSO.jpg")
+#st.sidebar.image("Logo TSO.jpg")
 
 
 Nome = st.sidebar.selectbox("Colaboradores", df["Colab"].unique())
