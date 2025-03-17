@@ -2,4 +2,3 @@ streamlit
 pandas
 plotly_express
 numpy
-theme
