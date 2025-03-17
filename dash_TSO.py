@@ -1,8 +1,7 @@
-import streamlit as st 
-import pandas as pd 
-import plotly_express as px 
+import streamlit as st
+import pandas as pd
+import plotly_express as px
 import numpy as np
-#import matplotlib.pyplot as plt
 
 st.set_page_config(layout="wide")
 
@@ -10,7 +9,6 @@ st.set_page_config(layout="wide")
 #st.write("The current color is", color)
 
 df = pd.read_csv("Respostas_TSO.csv", sep=",")
-
 
 df=df.sort_values("Nome")
 
@@ -20,57 +18,79 @@ df["Compet"] = df["Competencia"]
 st.write("""
 # TSO - Análise de Competências
 """ )
-aval = ["Autoavaliação","Gestor"]
+aval = ["Auto Avaliação","Avaliador"]
+st.sidebar.image("Logo TSO.jpg")
 
-Nome = st.sidebar.selectbox("Colaboradores",df["Colab"].unique())
+
+Nome = st.sidebar.selectbox("Colaboradores", df["Colab"].unique())
 
 df_filtered = df[df["Colab"] == Nome]
+df_Média = df_filtered.groupby("Compet")[["Auto Avaliação","Avaliador"]].mean().reset_index()
+#df_Média
 
-df["Compet"] = df_filtered["Competencia"]
+aval = ["Auto Avaliação","Avaliador"]
 
-aval = ["Autoavaliação","Gestor"]
-
+#-------------------------------------------------------------------------------------
+Avaliado = str(Nome)
 st.write("""
 ## Competências
-""" ), Nome
+""" ), Avaliado
 
-fig_comp = px.bar(df_filtered, y=aval, x="Competencia", barmode='group')
+fig_comp = px.bar(df_Média, y=aval, x="Compet", barmode='group', color_discrete_map = {"Auto Avaliação":"Brown", "Avaliador":"Yellow"})
+fig_comp.update_layout(xaxis_title="Comtetências", yaxis_title="Médias")
+
 fig_comp
 
 #df_filtered
+
+#-------------------------------------------------------------------------------------------
 
 st.write("""
 ## Análise das Perguntas
 """ ), Nome
 
-unica_Competencia = st.selectbox("Escolha a Competência",df["Compet"].unique(),index=1)
+df["CompetUniq"] = df_filtered["Competencia"]
+unica_Competencia = st.selectbox("Escolha a Competência",df["CompetUniq"].unique(),index=1)
 
 df_filtered2 = df_filtered[df["Compet"] == unica_Competencia]
 
-fig_Perg = px.bar(df_filtered2, y="Pergunta", x=aval, orientation="h", barmode='group')
-
+fig_Perg = px.bar(df_filtered2, y="Pergunta", x=aval, orientation="h", barmode='group', color_discrete_map = {"Auto Avaliação":"Brown", "Avaliador":"Yellow"})
+fig_Perg.update_layout(xaxis_title="Médias", yaxis_title="Perguntas")
 fig_Perg
 
 #df_filtered2
 
+#-----------------------------------------------------------------------------------------
+
 st.write("""
-## Desempenho por Competência
+## Desempenho Geral TSO por Competência
 """ )
 
 Compet_Desemp = st.selectbox("Defina a Competência",df["Competencia"].unique(),index=1)
 
-aval = ["Autoavaliação","Gestor"]
+aval = ["Auto Avaliação","Avaliador"]
 
-df_filtered3 = df[df["Competencia"] == Compet_Desemp]
+df_filtered5 = df[df["Compet"] == Compet_Desemp]
 
-#df_filtered3
+df_MédiaGeral = df_filtered5.groupby("Nome")[["Auto Avaliação","Avaliador"]].mean().reset_index()
+#df_MédiaGeral
 
-fig_Desenv = px.bar(df_filtered3, y=aval, x="Nome", barmode='group')
-fig_Desenv
+fig_DesenvGeral = px.bar(df_MédiaGeral, y=aval, x="Nome", barmode='group',color_discrete_map = {"Auto Avaliação":"Brown", "Avaliador":"Yellow"})
+fig_DesenvGeral.update_layout(xaxis_title="Colaboradores", yaxis_title="Médias")
+fig_DesenvGeral
+
+#---------------------------------------------------------------------------------
 
 st.write("""
 ## Desempenho da TSO por Setor x Competência
 """ ), Compet_Desemp
 
-fig_Setor = px.bar(df_filtered3, y=aval, x="Setor", barmode='group')
+df_filtered3 = df[df["Competencia"] == Compet_Desemp]
+#df_filtered3
+
+df_MédiaSetor = df_filtered5.groupby("Setor")[["Auto Avaliação","Avaliador"]].mean().reset_index()
+#df_MédiaSetor
+
+fig_Setor = px.bar(df_MédiaSetor, y=aval, x="Setor", barmode='group', color_discrete_map = {"Auto Avaliação":"Brown", "Avaliador":"Yellow"})
+fig_Setor.update_layout(xaxis_title="Setores", yaxis_title="Médias")
 fig_Setor
