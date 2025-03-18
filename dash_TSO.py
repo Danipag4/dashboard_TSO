@@ -37,7 +37,7 @@ st.write("""
 """ ), Avaliado
 
 fig_comp = px.bar(df_Média, y=aval, x="Compet", barmode='group', color_discrete_map = {"Auto Avaliação":"Brown", "Avaliador":"Yellow"})
-fig_comp.update_layout(xaxis_title="Comtetências", yaxis_title="Médias")
+fig_comp.update_layout(xaxis_title="Competências", yaxis_title="Médias")
 
 fig_comp
 
